@@ -2,28 +2,31 @@
 import { IoIosSearch } from "react-icons/io";
 import Image from "next/image";
 // import wea from "/Users/Naveenkumar Ayyasamy/Desktop/myDevelopement/weather-app/public/images/01d.png";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 const CardUi = () => {
   let api_key = "5b21c6ddae9ea0b374a2fd5a547681e2";
   // main state
-  const [text, SetText] = useState("coimbatore");
+  const [text, SetText] = useState("");
   console.log(text);
   const [weatherIcon, SetWeatherIcon] = useState(
     <Image src="/images/01d.png" width={80} height={80} />
   );
-  const [degreeCelcius, SetDegreeCelcius] = useState(8);
-  const [city, Setcity] = useState("coimbatore");
+  const [degreeCelcius, SetDegreeCelcius] = useState(0);
+  const [city, Setcity] = useState("Coimbatore");
   const [country, SetCountry] = useState("in");
   const [latitude, SetLatitude] = useState("0");
   const [longitude, SetLongitude] = useState("0");
   const [humidity, SetHumidity] = useState("0");
   const [windSpeed, SetWindSpeed] = useState("0");
+  const [errorData, SetErrorData] = useState(true);
+
   // weather api
   const search = async () => {
     let NAVEEN_WEATHER_URL = `https://api.openweathermap.org/data/2.5/weather?q=${text}&appid=${api_key}&units=Metric`;
     try {
       const response = await fetch(NAVEEN_WEATHER_URL);
       const data = await response.json();
+      console.log(data);
       SetDegreeCelcius(data.main.temp.toFixed(2));
       Setcity(data.name);
       SetCountry(data.sys.country);
@@ -31,8 +34,12 @@ const CardUi = () => {
       SetLongitude(data.coord.lon.toFixed(2));
       SetHumidity(data.main.humidity.toFixed(2));
       SetWindSpeed(data.wind.speed.toFixed(2));
+      if (data.cod === "404") {
+        console.log("City Not Found");
+        // SetErrorData(false);
+      }
     } catch (error) {
-      console.log(error);
+      console.log("An Error Occured: ", error.message);
     } finally {
     }
   };
